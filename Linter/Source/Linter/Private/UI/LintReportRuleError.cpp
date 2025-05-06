@@ -42,11 +42,11 @@ void SLintReportRuleError::Construct(const FArguments& Args)
 				.Text(FText::FromName(RuleViolation.Get()->ViolatorAssetData.PackageName))
 				.OnNavigate_Lambda([&]()
 				{
-					FContentBrowserModule& ContentBrowserModule = FModuleManager::Get().LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
+// WAYFINDER_CHANGE: kirsten@wayfindergames.se, KAURI-639 - BEGIN: Open asset in editor instead of Content Browser
 					FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry"));
-					TArray<FAssetData> AssetDatas;
-					AssetDatas.Push(AssetRegistryModule.Get().GetAssetByObjectPath(RuleViolation.Get()->ViolatorAssetData.GetSoftObjectPath()));
-					ContentBrowserModule.Get().SyncBrowserToAssets(AssetDatas);
+					auto Asset = AssetRegistryModule.Get().GetAssetByObjectPath(RuleViolation.Get()->ViolatorAssetData.GetSoftObjectPath());
+					GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->OpenEditorForAsset(Asset.GetAsset());
+// WAYFINDER_CHANGE: kirsten@wayfindergames.se - END
 				})
 			]
 		]

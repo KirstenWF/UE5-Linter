@@ -115,11 +115,11 @@ void SLintReportAssetDetails::Construct(const FArguments& Args)
 								.Text(AssetPath)
 								.OnNavigate_Lambda([&]()
 								{
-									FContentBrowserModule& ContentBrowserModule = FModuleManager::Get().LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
+// WAYFINDER_CHANGE: kirsten@wayfindergames.se, KAURI-639 - BEGIN: Open asset in editor instead of Content Browser
 									FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry"));
-									TArray<FAssetData> AssetDatas;
-									AssetDatas.Push(AssetData.Get());
-									ContentBrowserModule.Get().SyncBrowserToAssets(AssetDatas);
+									auto Asset = AssetRegistryModule.Get().GetAssetByObjectPath(AssetData.Get().GetSoftObjectPath());
+									GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->OpenEditorForAsset(Asset.GetAsset());
+// WAYFINDER_CHANGE: kirsten@wayfindergames.se - END
 								})
 							]
 						+ SVerticalBox::Slot()

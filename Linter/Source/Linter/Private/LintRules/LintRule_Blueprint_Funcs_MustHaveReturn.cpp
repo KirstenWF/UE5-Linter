@@ -33,11 +33,13 @@ bool ULintRule_Blueprint_Funcs_MustHaveReturn::PassesRule_Internal_Implementatio
 	FText AllFixes;
 
 	static const FName DefaultAnimGraphName("AnimGraph");
+	static const FName ControlRigGraphClassName("ControlRigGraph"); // kirsten: graph comes always with "entry" and "return" node, those can't be deleted!
 
 	for (auto FunctionGraph : Blueprint->FunctionGraphs)
 	{
 		if (FunctionGraph->GetFName() != UEdGraphSchema_K2::FN_UserConstructionScript
-			&& FunctionGraph->GetFName() != DefaultAnimGraphName)
+			&& FunctionGraph->GetFName() != DefaultAnimGraphName
+			&& FunctionGraph->GetClass()->GetFName() != ControlRigGraphClassName)
 		{
 			TArray<UK2Node_FunctionResult*> AllResultNodes;
 			FunctionGraph->GetNodesOfClass(AllResultNodes);

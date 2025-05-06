@@ -71,6 +71,12 @@ TArray<FLintRuleViolation> ULintRuleSet::LintPath(TArray<FString> AssetPaths, FS
 	for (FAssetData const& Asset : AssetList)
 	{
 		check(Asset.IsValid());
+
+		if (IsExcluded(Asset.GetSoftObjectPath()))
+		{
+			continue;
+		}
+
 		UE_LOG(LogLinter, Verbose, TEXT("Creating Lint Thread for asset \"%s\"."), *Asset.AssetName.ToString());
 		UObject* Object = Asset.GetAsset();
 		
@@ -125,8 +131,10 @@ TArray<TSharedPtr<FLintRuleViolation>> ULintRuleSet::LintPathShared(TArray<FStri
 	for (FLintRuleViolation Violation : RuleViolations)
 	{
 		TSharedPtr<FLintRuleViolation> SharedViolation = TSharedPtr<FLintRuleViolation>(new FLintRuleViolation(Violation));
-		SharedViolation->PopulateAssetData();
-		SharedRuleViolations.Push(SharedViolation);
+		if (SharedViolation->PopulateAssetData())
+		{
+			SharedRuleViolations.Push(SharedViolation);
+		}
 	}
 
 	return SharedRuleViolations;

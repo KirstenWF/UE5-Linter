@@ -66,5 +66,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Rules")
 	TMap<TSubclassOf<UObject>, FLintRuleList> ClassLintRulesMap;
 
+private:
+	virtual bool IsExcluded(const FSoftObjectPath& AssetPath) const { return false; }
+
 };
 
